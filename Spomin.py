@@ -47,10 +47,22 @@ class Spomin():
                 self.platno.create_image(x,y,image = slika)
 
     def klik(self,event):
-        self.x = (event.x - 125)/250
-        self.y = (event.y - 125)/250
-        
-        
+        self.x = event.x
+        self.y = event.y
+        a = round((self.x - 125)/250, 0)
+        b = round((self.y - 125)/250, 0)
+        for i in range(self.štVrstic):      
+            for j in range(self.štStolpcev):
+                if a == j and b == i:
+                    vrednost = self.polja[i][j]
+                    if vrednost < 0:
+                        slika = self.sezImen[-vrednost-1]
+                    else:
+                        slika = self.sezObrazov[vrednost-1]
+                    x = j*250 + 125
+                    y = i*250 + 125
+                    self.platno.create_image(x,y,image = slika)
+           
         
                 
             
