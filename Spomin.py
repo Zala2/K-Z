@@ -9,14 +9,22 @@ class Spomin():
         self.sezImen = []
         self.štVrstic = 4
         self.štStolpcev = 5
+        self.a = 0
+        self.b = 0
+        self.c = 0
+        self.d = 0
+        self.ind = 0
+        self.ind1 = 0
+        self.ind2 = 0
+        self.števecKlikov = 0
         self.hrbet = PhotoImage(file = 'bela.gif')
         for i in range(1,11):
             self.sezObrazov.append(PhotoImage(file = 'obraz' + str(i) + '.gif'))
             self.sezImen.append(PhotoImage(file = 'ime' + str(i) + '.gif'))
         self.polja = self.matrika()
         self.narišiMatriko()
-        #self.narišiZaprtoMatriko()
-        self.platno.bind('<Button-1>',self.klik)
+        self.platno.bind('<Button-1>',self.klikLeva)
+
         
     def matrika(self):
         sez = list(range(1,11))+list(range(-10,0))
@@ -26,15 +34,11 @@ class Spomin():
             v = sez[i:i+5]
             matrika.append(v)
         return matrika
-
-    def narišiZaprtoMatriko(self):
-        for i in range(self.štVrstic):      
-            for j in range(self.štStolpcev):
-                x = j*250 + 125
-                y = i*250 + 125
-                self.platno.create_image(x,y,image = self.hrbet)    
+                
     
     def narišiMatriko(self):
+        self.matrikaId1 = [[0]*self.štStolpcev for i in range(self.štVrstic)]
+        self.matrikaId2 = [[0]*self.štStolpcev for i in range(self.štVrstic)]
         for i in range(self.štVrstic):      
             for j in range(self.štStolpcev):
                 vrednost = self.polja[i][j]
@@ -44,33 +48,48 @@ class Spomin():
                     slika = self.sezObrazov[vrednost-1]
                 x = j*250 + 125
                 y = i*250 + 125
-                self.platno.create_image(x,y,image = slika)
+                self.matrikaId1[i][j] = self.platno.create_image(x,y,image = slika)
+                self.matrikaId2[i][j] = self.platno.create_image(x,y,image = self.hrbet)
+                
+                
 
-    def klik(self,event):
+    def klikLeva(self,event):
+        #find_overlapping(x1, y1, x2, y2)
         self.x = event.x
         self.y = event.y
-        a = round((self.x - 125)/250, 0)
-        b = round((self.y - 125)/250, 0)
-        for i in range(self.štVrstic):      
-            for j in range(self.štStolpcev):
-                if a == j and b == i:
-                    vrednost = self.polja[i][j]
-                    if vrednost < 0:
-                        slika = self.sezImen[-vrednost-1]
-                    else:
-                        slika = self.sezObrazov[vrednost-1]
-                    x = j*250 + 125
-                    y = i*250 + 125
-                    self.platno.create_image(x,y,image = slika)
-           
-        
-                
-            
+        self.z = self.x//250
+        self.k = self.y//250
+        vrednost = self.polja[self.k][self.z]
+        if vrednost < 0:
+            slika = self.sezImen[-vrednost-1]
+            self.ind = -vrednost-1
+        else:
+            slika = self.sezObrazov[vrednost-1]
+            self.ind = vrednost-1
+        self.platno.tag_raise(self.matrikaId1[self.k][self.z])
+        self.števecKlikov += 1   
+        if self.števecKlikov%2 != 0:
+            self.ind1 = self.ind
+            self.a = self.z
+            self.b = self.k
 
-#def Odpiranje(primerja, in če ni zapre po par sekundah)
-#def Konec(ko je vse odprto, baloni)
-        
-#self.canvas.bind("<Key>", self.tipka_pritisnjena)
+        else:
+            self.ind2 = self.ind
+            self.c = self.z
+            self.d = self.k
+            self.platno.after(1000,self.primerjava)
+                  
+
+    def primerjava(self):
+        if self.ind1 == self.ind2:
+            pass
+        else:
+            self.platno.tag_raise(self.matrikaId2[self.b][self.a])
+            self.platno.tag_raise(self.matrikaId2[self.d][self.c])
+
+            
+               
+
 
 master = Tk()
 aplikacija = Spomin(master)
