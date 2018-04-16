@@ -17,6 +17,7 @@ class Spomin():
         self.ind1 = 0
         self.ind2 = 0
         self.števecKlikov = 0
+        self.napis = None
         self.hrbet = PhotoImage(file = 'bela.gif')
         for i in range(1,11):
             self.sezObrazov.append(PhotoImage(file = 'obraz' + str(i) + '.gif'))
@@ -74,11 +75,19 @@ class Spomin():
             self.b = self.k
 
         else:
-            self.ind2 = self.ind
-            self.c = self.z
-            self.d = self.k
-            self.platno.after(1000,self.primerjava)
-                  
+            x1 = self.a*250
+            y1 = self.b*250
+            x2 = x1 + 250
+            y2 = y1 + 250
+            prekrivanje = self.platno.find_overlapping(x1, y1, x2, y2)
+            if (self.z and self.k) in prekrivanje:
+                self.platno.itemconfig(self.napis, text='Ta par je že odprt!')
+                self.platno.tag_raise(self.matrikaId2[self.k][self.z])
+            else:
+                self.ind2 = self.ind
+                self.c = self.z
+                self.d = self.k
+                self.platno.after(500,self.primerjava)
 
     def primerjava(self):
         if self.ind1 == self.ind2:
