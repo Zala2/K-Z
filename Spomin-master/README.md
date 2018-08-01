@@ -1,2 +1,0 @@
-# Spomin
-Viki krema
